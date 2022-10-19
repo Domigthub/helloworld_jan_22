@@ -1,44 +1,6 @@
-pipeline {
-    agent any
-    tools{
-        maven 'M2_HOME'
-    }
-    environment {
-    registry = '252658788968.dkr.ecr.us-east-1.amazonaws.com/devop_repository1'
-    registryCredential = 'jenkins-ecr'
-    dockerimage = ''
-  }
-    stages {
-        stage('Checkout'){
-            steps{
-                git branch: 'main', url: 'https://github.com/Hermann90/helloworld_jan_22.git'
-            }
-        }
-        stage('Code Build') {
-            steps {
-                sh 'mvn clean package'
-            }
-        }
-        stage('Test') {
-            steps {
-                sh 'mvn test'
-            }
-        }
-        stage('Build Image') {
-            steps {
-                script{
-                    dockerImage = docker.build registry + ":$BUILD_NUMBER"
-                } 
-            }
-        }
-        stage('Deploy image') {
-            steps{
-                script{ 
-                    docker.withRegistry("https://"+registry,"ecr:us-east-1:"+registryCredential) {
-                        dockerImage.push()
-                    }
-                }
-            }
-        }  
-    }
-}
+# Pull base image 
+From tomcat:8-jre8 
+
+# Maintainer 
+MAINTAINER "kserge2001@yahoo.fr" 
+#COPY ./webapp.war /usr/local/tomcat/webapps
